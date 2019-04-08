@@ -8,12 +8,12 @@
 #include "testScanner.h"
 #include "scanner.h"
 
-
+FILE* file;
 
 int main(int argc, char *argv[]) {
 	
 	char filename[50];
-	FILE* file;
+	
 	
 	if ( argc == 2 ){
 		strcpy(filename, argv[1]);
