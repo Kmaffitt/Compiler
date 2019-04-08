@@ -11,6 +11,7 @@ void testScanner(){
 	token_t token;
 	do{
 		token = scanner();
-		printf("\nTK:    %s\n TKstr: %s\n Line#: %d\n\n", token.name, token.str, token.line);	
-	}while(token.id != EOFTK);
+		printf("\nTK:    [%s]\nTKstr: %s\nLine#: %d\n\n", token.name, token.str, token.line);	
+	}
+	while(token.id != EOFTK);
 }

@@ -5,12 +5,11 @@
 #include "scanner.h"
 #include "token.h"
 
-extern FILE * file;
+extern FILE* file;
 static int lineCount = 1;
 int lookAhead;
 
-//FSA Table: Rows = States, Columns = Alphabet
-//{lowercase, uppercase, digits, delimiters, $, WS, EOF}
+//{lowercase, uppercase, digits, delimiters, comment, WS, EOF}
 const int FSATable[20][7] = {
 {    1,   -2,    9,   17,   18,    0, 1004},
 {    2,    2,    2, 1001, 1001, 1001, 1001},
@@ -52,6 +51,17 @@ token_t scanner(){
 	
 	while(state < 1000){
 	
+		//filter1
+
+		//throw out chars after & until newline
+		if(inputChar == 38){
+			while (fgetc(file) != 10){}
+			lineCount += 1;
+			inputChar = fgetc(file);
+			
+		}
+
+		//determines column
 		if(inputChar > 96 && inputChar < 123) nextChar = lowercase;
 		else if(inputChar > 64 && inputChar < 91) nextChar = uppercase;
 		else if(inputChar > 47 && inputChar < 58) nextChar = digits;
@@ -61,17 +71,13 @@ token_t scanner(){
 			|| inputChar == 46 || inputChar == 40 || inputChar == 41 
 			|| inputChar == 44 || inputChar == 123 || inputChar == 125 
 			|| inputChar == 59 || inputChar == 91 || inputChar == 93) nextChar = delimit;
-		else if(inputChar == 36) nextChar = comment;
 		else if(inputChar == 32 || inputChar == 9 || inputChar == 10) nextChar = whiteSpace;
 		else if(inputChar == EOF) nextChar = endOfFile;
-		else {
+		else{
 			errorMsg(-3, lineCount);
 			exit(1);
 		}
 	
-
-		
-
 		state = FSATable[state][nextChar];
 
 		if(inputChar == 10 && state < 1000) lineCount += 1;
@@ -80,31 +86,27 @@ token_t scanner(){
 			errorMsg(state, lineCount);
 			exit(1);
 		}
-		else if(state == 18){
-			commentFlag = 1;
-		}
-		else if(state == 19){
-			commentFlag = 0;
-		}
 		else if(state > 1000){
 
 			flag = 0;
 			strcpy(result.str, str);
 			if(state == 1001){
 	
+				//filter 2
 
-				for(i=0; i<12; i++){
+				//check for keywords
+				for(i=0; i<11; i++){
 					if(strcmp(keywords[i], str) == 0){
-						result.id = (i+2);
+						result.id = (i+1);
 						result.name = tokenNames[result.id];
 						flag = 1;
 						break;
 					}
 				}
 	
-
+				//not a keyword, it's an idTK
 				if(flag == 0) {
-					result.id = 1;
+					result.id = 0;
 					result.name = tokenNames[result.id];
 				}
 			}
@@ -112,16 +114,20 @@ token_t scanner(){
 				result.id = 0;
 				result.name = tokenNames[result.id];
 			}
+
+			//match delims
 			else if(state == 1003){
 				for(i = 0; i < 18; i++){
 					if(strcmp(delimiters[i] ,str) == 0){
-						result.id = (i+14);
+						result.id = (i+12);
 						result.name = tokenNames[result.id];
 					}
 				}
 			}
+
+			//EOF
 			else if(state == 1004){
-				result.id = 32;
+				result.id = 30;
 				result.name = tokenNames[result.id];
 			}
 		}
