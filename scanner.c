@@ -9,31 +9,31 @@ extern FILE* file;
 static int lineCount = 1;
 int lookAhead;
 
-//{lowercase, uppercase, digits, delimiters, comment, WS, EOF}
-const int FSATable[20][7] = {
-{    1,   -2,    9,   17,   18,    0, 1004},
-{    2,    2,    2, 1001, 1001, 1001, 1001},
-{    3,    3,    3, 1001, 1001, 1001, 1001},
-{    4,    4,    4, 1001, 1001, 1001, 1001},
-{    5,    5,    5, 1001, 1001, 1001, 1001},
-{    6,    6,    6, 1001, 1001, 1001, 1001},
-{    7,    7,    7, 1001, 1001, 1001, 1001},
-{    8,    8,    8, 1001, 1001, 1001, 1001},
-{   -1,   -1,   -1, 1001, 1001, 1001, 1001},
-{ 1002, 1002,   10, 1002, 1002, 1002, 1002},
-{ 1002, 1002,   11, 1002, 1002, 1002, 1002},
-{ 1002, 1002,   12, 1002, 1002, 1002, 1002},
-{ 1002, 1002,   13, 1002, 1002, 1002, 1002},
-{ 1002, 1002,   14, 1002, 1002, 1002, 1002},
-{ 1002, 1002,   15, 1002, 1002, 1002, 1002},
-{ 1002, 1002,   16, 1002, 1002, 1002, 1002},
-{ 1002, 1002,   -1, 1002, 1002, 1002, 1002},
-{ 1003, 1003, 1003, 1003, 1003, 1003, 1003},
-{   18,   18,   18,   18,   19,   18,   18},
-{    0,    0,    0,    0,    0,    0,    0}
+//{lowercase, uppercase, digits, delimiters, WS, EOF}
+const int FSATable[20][6] = {
+{    1,   -2,    9,   17,    0, 1004},
+{    2,    2,    2, 1001, 1001, 1001},
+{    3,    3,    3, 1001, 1001, 1001},
+{    4,    4,    4, 1001, 1001, 1001},
+{    5,    5,    5, 1001, 1001, 1001},
+{    6,    6,    6, 1001, 1001, 1001},
+{    7,    7,    7, 1001, 1001, 1001},
+{    8,    8,    8, 1001, 1001, 1001},
+{   -1,   -1,   -1, 1001, 1001, 1001},
+{ 1002, 1002,   10, 1002, 1002, 1002},
+{ 1002, 1002,   11, 1002, 1002, 1002},
+{ 1002, 1002,   12, 1002, 1002, 1002},
+{ 1002, 1002,   13, 1002, 1002, 1002},
+{ 1002, 1002,   14, 1002, 1002, 1002},
+{ 1002, 1002,   15, 1002, 1002, 1002},
+{ 1002, 1002,   16, 1002, 1002, 1002},
+{ 1002, 1002,   -1, 1002, 1002, 1002},
+{ 1003, 1003, 1003, 1003, 1003, 1003},
+{   18,   18,   18,   18,   18,   18},
+{    0,    0,    0,    0,    0,    0}
 };
 
-enum alphabet {lowercase, uppercase, digits, delimit, comment, whiteSpace, endOfFile};
+enum alphabet {lowercase, uppercase, digits, delimit, whiteSpace, endOfFile};
 	
 
 token_t scanner(){
@@ -44,7 +44,6 @@ token_t scanner(){
 	char str[] = "";
 	int i;
 	int flag;
-	int commentFlag = 0;
 	char tempstr[2];	
 
 	inputChar = lookAhead;
@@ -61,18 +60,25 @@ token_t scanner(){
 			
 		}
 
-		//determines column
-		if(inputChar > 96 && inputChar < 123) nextChar = lowercase;
-		else if(inputChar > 64 && inputChar < 91) nextChar = uppercase;
-		else if(inputChar > 47 && inputChar < 58) nextChar = digits;
-		else if(inputChar == 61 || inputChar == 60 || inputChar == 62 
-			|| inputChar == 58 || inputChar == 43 || inputChar == 45 
-			|| inputChar == 42 || inputChar == 47 || inputChar == 37 
-			|| inputChar == 46 || inputChar == 40 || inputChar == 41 
-			|| inputChar == 44 || inputChar == 123 || inputChar == 125 
-			|| inputChar == 59 || inputChar == 91 || inputChar == 93) nextChar = delimit;
-		else if(inputChar == 32 || inputChar == 9 || inputChar == 10) nextChar = whiteSpace;
-		else if(inputChar == EOF) nextChar = endOfFile;
+		//determine column
+		if(inputChar > 96 && inputChar < 123){
+			nextChar = lowercase;
+		}
+		else if(inputChar > 64 && inputChar < 91){
+			nextChar = uppercase;
+		}
+		else if(inputChar > 47 && inputChar < 58){
+			nextChar = digits;
+		}
+		else if(inputChar == 61 || inputChar == 60 || inputChar == 62 || inputChar == 58 || inputChar == 43 || inputChar == 45 || inputChar == 42 || inputChar == 47 || inputChar == 37 || inputChar == 46 || inputChar == 40 || inputChar == 41 || inputChar == 44 || inputChar == 123 || inputChar == 125 || inputChar == 59 || inputChar == 91 || inputChar == 93){
+			nextChar = delimit;
+		}
+		else if(inputChar == 32 || inputChar == 9 || inputChar == 10){
+			nextChar = whiteSpace;
+		}
+		else if(inputChar == EOF){
+			nextChar = endOfFile;
+		}
 		else{
 			errorMsg(-3, lineCount);
 			exit(1);
@@ -132,15 +138,17 @@ token_t scanner(){
 				result.name = tokenNames[result.id];
 			}
 		}
-		else if(commentFlag == 0 && inputChar != 9 && inputChar != 10 && inputChar != 32){
+		else if(inputChar != 9 && inputChar != 10 && inputChar != 32){
 			tempstr[0] = inputChar;
 			tempstr[1] = '\0';
 			strcat(str, tempstr);
 		}
-
+		
+		//not a terminal yet. Get another char
 		if(state < 1000) inputChar = fgetc(file);
 	}
 	
+	//set first char of next token
 	lookAhead = inputChar;
 	result.line = lineCount;
 	return result;
