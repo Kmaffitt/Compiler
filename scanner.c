@@ -110,8 +110,9 @@ token_t scanner(){
 					result.name = tokenNames[result.id];
 				}
 			}
+			//integer
 			else if(state == 1002){
-				result.id = 0;
+				result.id = 1;
 				result.name = tokenNames[result.id];
 			}
 
