@@ -75,6 +75,11 @@ void block(){
 	}
 }
 
+void stats(){
+	printf("stats place holder\n");
+	return;
+}
+
 void consume(){
 	tk = scanner();
 }
