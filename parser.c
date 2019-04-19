@@ -61,12 +61,17 @@ void vars(){
 void block(){
 	//check for void tk
 	if(tk.name == voidTK){
-		
+		consume();
 		vars();
 		stats();
+		if(tk.name == retunTK){
+			//reached end of block
+			consume();
+			return;
+		}
 	}
 	else{
-		printf("ERROR: \"%s\" at line %d, expected \"void\" token to begin <block>\n", tk.str, tk.line);
+		printf("ERROR: \"%s\" at line %d, expected \"void\" token to begin block\n", tk.str, tk.line);
 	}
 }
 

@@ -17,5 +17,8 @@ scanner.o : scanner.c scanner.h token.h
 token.o : token.h token.c
 	$(CC) $(CFLAGS) -c token.c
 
+parser.o : parser.h parser.c
+	$(CC) $(CFLAGS) -c parser.c
+
 clean:
 	rm scanner *.o
