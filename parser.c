@@ -94,7 +94,19 @@ void stats(){
 }
 
 void mStat(){
-
+	//check for empty production
+	if(tk.id == returnTK){
+		return;
+	}else{
+		stat();
+		if(tk.id == semiTK){
+			mStat();
+			return;
+		}else{
+			printf("ERROR: \"%s\" at line %d, expected \";\" to end statement\n", tk.str, tk.line);
+			exit(1);	
+		}
+	}
 }
 
 void stat(){
@@ -195,7 +207,21 @@ void assign(){
 }
 
 void expr(){
-	//end w consume
+	A();
+	//expr -> <A> + <expr>
+	if(tk.id == plusTK){
+		consume();
+		expr();
+		return;
+	//expr -> <A> - <expr>
+	}else if(tk.id == minusTK){
+		consume();
+		expr();
+		return;
+	//expr -> <A>
+	}else{
+		return;
+	}
 }
 
 void RO(){
@@ -222,6 +248,65 @@ void RO(){
 		return;
 	}else{
 		printf("ERROR: \"%s\" at line %d, expected reltational operator: \"<\",\"=<\",\">\",\"=>\",\"<>\", or \"=\"\n", tk.str, tk.line);
+		exit(1);
+	}
+}
+
+void A(){
+	N();
+	if(tk.id == slashTK){
+		consume();
+		A();
+		return;
+	}else{
+		return;
+	}
+}
+
+void N(){
+	M();
+	if(tk.id == starTK){
+		consume();
+		N();
+		return;
+	}else{
+		return;
+	}
+}
+
+void M(){
+	if(tk.id == percTK){
+		consume();
+		M();
+		return;	
+	}else if(tk.id == lpTK || tk.id == idTK || tk.id == intTK){
+		R();
+		return;
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected \"%%\", an expression, and identifier, or an integer\n", tk.str, tk.line);
+		exit(1);
+	}
+}
+
+void R(){
+	if(tk.id == lpTK){
+		consume();
+		expr();
+		if(tk.id == rpTK){
+			consume();
+			return;
+		}else{
+			printf("ERROR: \"%s\" at line %d, expected \")\" to close opening paren\n", tk.str, tk.line);
+			exit(1);
+		}
+	}else if(tk.id == idTK){
+		consume();
+		return;
+	}else if(tk.id == intTK){
+		consume();
+		return;
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected an expression, an identifier, or an integer\n", tk.str, tk.line);
 		exit(1);
 	}
 }

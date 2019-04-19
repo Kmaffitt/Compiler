@@ -16,7 +16,10 @@ void loop();
 void assign();
 void expr();
 void RO();
-
+void A();
+void N();
+void M();
+void R();
 
 void consume();
 
