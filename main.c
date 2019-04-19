@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
 	}
 	
 	file = fopen(filename, "r");
-	testScanner();
+	//testScanner();
+	parser();
 	fclose(file);
 	
 	return 0;
