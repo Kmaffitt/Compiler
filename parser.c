@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "parser.h"
 #include "scanner.h"
 #include "token.h"
+
 
 extern int lookAhead;
 extern FILE* file;
@@ -14,12 +16,12 @@ void parse(){
 	//get file
 	lookAhead = fgetc(file);
 	//get first token
-	consume();
-	
+	consume();	
+
 	program();
 
 	printf("CLEAN PARSE\n\n");
-	return 0;
+	return;
 }
 
 
@@ -31,40 +33,44 @@ void program(){
 
 void vars(){
 	//check for empty state -- follows of block or stats
-	if(tk.name == voidTK || tk.name == scanTK || tk.name == printTK || tk.name == condTK || tk.name == iterTK || tk.name == idTK){
+	if(tk.id == voidTK || tk.id == scanTK || tk.id == printTK || tk.id == condTK || tk.id == iterTK || tk.id == idTK || tk.id == returnTK){
 		return;
 	}
-	else if(tk.name == varTK){
+	else if(tk.id == varTK){
 		consume();
-		if(tk.name == idTK){
+		if(tk.id == idTK){
 			consume();
-			if(tk.name == semiTK){
+			if(tk.id == colonTK){
 				consume();
-				if(tk.name == intTK){
+				if(tk.id == intTK){
 					consume();
 					vars();
 					return;
 				}else{
 					printf("ERROR: \"%s\" at line %d, expected \"integer\" token to follow \":\"\n", tk.str, tk.line);
+					exit(1);				
 				}
 			}else{
 				printf("ERROR: \"%s\" at line %d, expected \":\" token to follow identifier token\n", tk.str, tk.line);
+				exit(1);			
 			}
 		}else{
 			printf("ERROR: \"%s\" at line %d, expected \"identifier\" token to follow \"var\"\n", tk.str, tk.line);
+			exit(1);
 		}
 	}else{
 		printf("ERROR: \"%s\" at line %d, expected \"var\" token to begin var declaration\n", tk.str, tk.line);
+		exit(1);	
 	}
 }
 
 void block(){
 	//check for void tk
-	if(tk.name == voidTK){
+	if(tk.id == voidTK){
 		consume();
 		vars();
 		stats();
-		if(tk.name == retunTK){
+		if(tk.id == returnTK){
 			//reached end of block
 			consume();
 			return;
@@ -72,15 +78,158 @@ void block(){
 	}
 	else{
 		printf("ERROR: \"%s\" at line %d, expected \"void\" token to begin block\n", tk.str, tk.line);
+		exit(1);	
 	}
 }
 
 void stats(){
-	printf("stats place holder\n");
+	stat();
+	if(tk.id == semiTK){
+		mStat();
+		return;
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected \";\" to end statement\n", tk.str, tk.line);
+		exit(1);	
+	}
+}
+
+void mStat(){
+
+}
+
+void stat(){
+	//check for various initial statement tokens
+	if(tk.id == scanTK){
+		consume();
+		in();
+	}else if(tk.id == printTK){
+		consume();
+		out();
+	}else if(tk.id == voidTK){
+		consume();
+		block();
+	}else if(tk.id == condTK){
+		consume();
+		ifF();
+	}else if(tk.id == iterTK){
+		consume();
+		loop();
+	}else if(tk.id == idTK){
+		consume();
+		assign();
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected one of(\"scan\",\"print\",\"cond\",\"iter\",\"scan\", or an identifier to begin statement\n", tk.str, tk.line);
+		exit(1);
+	}
+
 	return;
 }
 
+void in(){
+	if(tk.id == idTK){
+		return;
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected identifier to follow \"scan\"\n", tk.str, tk.line);
+		exit(1);
+	}
+}
+
+void out(){
+	consume();
+	expr();
+	return;
+}
+
+
+void ifF(){
+	if(tk.id == lbTK){
+		consume();
+		expr();
+		RO();
+		expr();
+		if(tk.id == rbTK){
+			consume();			
+			stat();
+			return;
+		}else{
+			printf("ERROR: \"%s\" at line %d, expected \"]\" to conclude if statement\n", tk.str, tk.line);
+			exit(1);
+		}
+		
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected \"[\" to follow \"cond\"\n", tk.str, tk.line);
+		exit(1);
+	}
+}
+
+void loop(){
+	if(tk.id == lbTK){
+		consume();
+		expr();
+		RO();
+		expr();
+		if(tk.id == rbTK){
+			consume();			
+			stat();
+			return;
+		}else{
+			printf("ERROR: \"%s\" at line %d, expected \"]\" to conclude iter statement\n", tk.str, tk.line);
+			exit(1);
+		}
+		
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected \"[\" to follow \"iter\"\n", tk.str, tk.line);
+		exit(1);
+	}
+}
+
+void assign(){
+	if(tk.id == eqTK){
+		consume();
+		expr();
+		return;
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected \"=\" to follow identifier in assignment statement\n", tk.str, tk.line);
+		exit(1);
+	}
+}
+
+void expr(){
+	//end w consume
+}
+
+void RO(){
+	if(tk.id == lessTK){
+		consume();
+		//test for <>
+		if(tk.id == greatTK){
+			consume();			
+			return;
+		}
+		//just <
+		return;
+	}else if(tk.id == eqTK){
+		consume();
+		//test for =< and =>
+		if(tk.id == lessTK || tk.id == greatTK){
+			consume();
+			return;
+		}
+		//just =
+		return;
+	}else if(tk.id == greatTK){
+		consume();
+		return;
+	}else{
+		printf("ERROR: \"%s\" at line %d, expected reltational operator: \"<\",\"=<\",\">\",\"=>\",\"<>\", or \"=\"\n", tk.str, tk.line);
+		exit(1);
+	}
+}
+
+
 void consume(){
 	tk = scanner();
+	//for debugging
+	printf("\nTK:    [%s]\nTKid:  %d\nTKstr: %s\nLine#: %d\n\n", tk.name,tk.id, tk.str, tk.line);
 }
 

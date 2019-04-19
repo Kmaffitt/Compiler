@@ -7,6 +7,7 @@
 #include "token.h"
 #include "testScanner.h"
 #include "scanner.h"
+#include "parser.h"
 
 FILE* file;
 
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
 	
 	file = fopen(filename, "r");
 	//testScanner();
-	parser();
+	parse();
 	fclose(file);
 	
 	return 0;

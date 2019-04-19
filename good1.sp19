@@ -1,1 +1,4 @@
 var x : 3
+void
+var y : 6
+return
