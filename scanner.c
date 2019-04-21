@@ -50,9 +50,7 @@ token_t scanner(){
 	
 	while(state < 1000){
 	
-		//filter1
-
-		//throw out chars after & until newline
+		//handle comments, throw out chars after & until newline
 		if(inputChar == 38){
 			while (fgetc(file) != 10){}
 			lineCount += 1;
@@ -98,8 +96,6 @@ token_t scanner(){
 			strcpy(result.str, str);
 			if(state == 1001){
 	
-				//filter 2
-
 				//check for keywords
 				for(i=0; i<11; i++){
 					if(strcmp(keywords[i], str) == 0){

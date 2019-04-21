@@ -8,6 +8,7 @@
 #include "testScanner.h"
 #include "scanner.h"
 #include "parser.h"
+#include "node.h"
 
 FILE* file;
 
