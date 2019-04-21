@@ -4,11 +4,13 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#include "token.h"
+#include "testTree.h"
 #include "testScanner.h"
 #include "scanner.h"
 #include "parser.h"
 #include "node.h"
+#include "token.h"
+
 
 FILE* file;
 
@@ -30,8 +32,11 @@ int main(int argc, char *argv[]) {
 	
 	file = fopen(filename, "r");
 	//testScanner();
-	parse();
+	node_t* tree = parse();
+	printTree(tree, 0);
 	fclose(file);
 	
 	return 0;
 }
+
+

@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -Wall -g
 objects := $(patsubst %.c,%.o,$(wildcard *.c))
 
-frontEnd : main.o scanner.o testScanner.o token.o parser.o
-	$(CC) $(CFLAGS) -o frontEnd main.o scanner.o testScanner.o token.o parser.o 
+frontEnd : main.o scanner.o testScanner.o token.o parser.o testTree.o
+	$(CC) $(CFLAGS) -o frontEnd main.o scanner.o testScanner.o token.o parser.o testTree.o
 
 main.o : main.c token.h
 	 $(CC) $(CFLAGS) -c main.c
@@ -19,6 +19,9 @@ token.o : token.h token.c
 
 parser.o : parser.h parser.c
 	$(CC) $(CFLAGS) -c parser.c
+
+testTree.o : node.h token.c token.h
+	$(CC) $(CFLAGS) -c testTree.c
 
 clean:
 	rm frontEnd *.o

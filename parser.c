@@ -527,11 +527,16 @@ node_t* create_node(char* label){
 	if(node == NULL){
 		return NULL;
 	}
-	node -> label = NULL;
+	node -> label = label;
 	node -> c1 = NULL;
 	node -> c2 = NULL;
 	node -> c3 = NULL;
 	node -> c4 = NULL;
+
+	//will get replaced if token needs to be stored. This way can test before printing token when printing nodes
+	token_t dummyToken;
+	dummyToken.id = -1;
+	node -> token = dummyToken;
 
 	return node;
 }
