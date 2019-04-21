@@ -13,7 +13,7 @@ extern FILE* file;
 
 token_t tk;
 
-/********************************
+/*************************************************************
 Parser for BNF--
 
 <program>     ->      <vars> <block>
@@ -34,7 +34,7 @@ Parser for BNF--
 <assign>      ->      Identifier  = <expr>  
 <RO>          ->      < | = <  | >  | = > | < >   |   =            
 
-********************************/
+*************************************************************/
 
 node_t* parse(){
 	
@@ -42,15 +42,12 @@ node_t* parse(){
 	lookAhead = fgetc(file);
 	consume();	
 
-	node_t* root;
+	printf("\nPARSING\n\n");
+	node_t* root = program();
 
-	root = program();
-
-	//printf("%s\n", root -> token.str);
-	
 	//check for overrun
 	if(tk.id == EOFTK){
-		printf("CLEAN PARSE\n\n");
+		printf("\nCLEAN PARSE\n");
 		return root;
 	}else{
 		printf("ERROR: \"%s\" at line %d, extra input beyond last block of program\n", tk.str, tk.line);
@@ -59,9 +56,9 @@ node_t* parse(){
 	
 }
 
-/***************
+/*************************************************************
 <program>  ->     <vars> <block>
-***************/
+*************************************************************/
 node_t* program(){
 	printf("in program\n");
 
@@ -73,9 +70,9 @@ node_t* program(){
 	return node;
 }
 
-/***************
+/*************************************************************
 <vars>         ->      empty | var Identifier : Integer <vars> 
-***************/
+*************************************************************/
 node_t* vars(){
 	printf("in vars\n");
 
@@ -121,9 +118,9 @@ node_t* vars(){
 	}
 }
 
-/***************
+/*************************************************************
 <block>       ->      void <vars> <stats> return
-***************/
+*************************************************************/
 node_t* block(){
 	printf("in block\n");
 	node_t* node = 	create_node("<block>");
@@ -147,9 +144,10 @@ node_t* block(){
 		exit(1);	
 	}
 }
-/***************
+
+/*************************************************************
 <stats>         ->      <stat> ; <mStat>
-***************/
+*************************************************************/
 node_t* stats(){
 	printf("in stats\n");
 	node_t* node = 	create_node("<stats>");
@@ -165,9 +163,9 @@ node_t* stats(){
 	}
 }
 
-/***************
+/*************************************************************
 <mStat>       ->      empty |  <stat>  ;  <mStat>
-***************/
+*************************************************************/
 node_t* mStat(){
 	printf("in mStat\n");
 	node_t* node = 	create_node("<mStat>");
@@ -189,9 +187,9 @@ node_t* mStat(){
 	}
 }
 
-/***************
-<stat>           ->      <in> | <out> | <block> | <if> | <loop> | <assign>
-***************/
+/*************************************************************
+<stat>   ->   <in> | <out> | <block> | <if> | <loop> | <assign>
+*************************************************************/
 node_t* stat(){
 	printf("in stat\n");
 	node_t* node = 	create_node("<stat>");
@@ -203,7 +201,6 @@ node_t* stat(){
 		consume();
 		node -> c1 = out();
 	}else if(tk.id == voidTK){
-		//consume();
 		node -> c1 = block();
 	}else if(tk.id == condTK){
 		consume();
@@ -212,7 +209,6 @@ node_t* stat(){
 		consume();
 		node -> c1 = loop();
 	}else if(tk.id == idTK){
-		//consume();
 		node -> c1 = assign();
 	}else{
 		printf("ERROR: \"%s\" at line %d, expected one of \"scan\",\"print\",\"cond\",\"iter\",\"scan\", or an identifier to begin statement\n", tk.str, tk.line);
@@ -222,9 +218,9 @@ node_t* stat(){
 	return node;
 }
 
-/***************
+/*************************************************************
 <in>              ->      scan  Identifier 
-***************/
+*************************************************************/
 node_t* in(){
 	printf("in in\n");
 	node_t* node = 	create_node("<in>");
@@ -241,9 +237,9 @@ node_t* in(){
 	}
 }
 
-/***************
+/*************************************************************
 <out>            ->      print <expr>
-***************/
+*************************************************************/
 node_t* out(){
 	printf("in out\n");
 	node_t* node = 	create_node("<out>");
@@ -252,9 +248,9 @@ node_t* out(){
 	return node;
 }
 
-/***************
+/*************************************************************
 <if>               ->      cond [ <expr> <RO> <expr> ] <stat>
-***************/
+*************************************************************/
 node_t* ifF(){
 	printf("in if\n");
 	node_t* node = 	create_node("<if>");
@@ -279,9 +275,9 @@ node_t* ifF(){
 	}
 }
 
-/***************
+/*************************************************************
 <loop>          ->      iter [ <expr> <RO> <expr> ] <stat>
-***************/
+*************************************************************/
 node_t* loop(){
 	printf("in loop\n");
 	node_t* node = 	create_node("<loop>");
@@ -306,9 +302,9 @@ node_t* loop(){
 	}
 }
 
-/***************
+/*************************************************************
 <assign>       ->      Identifier  = <expr>  
-***************/
+*************************************************************/
 node_t* assign(){
 	printf("in assign\n");
 	node_t* node = 	create_node("<assign>");
@@ -327,9 +323,9 @@ node_t* assign(){
 	}
 }
 
-/***************
+/*************************************************************
 <expr>        ->      <A> + <expr> | <A> - <expr> | <A>
-***************/
+*************************************************************/
 node_t* expr(){
 	printf("in expr\n");
 	node_t* node = 	create_node("<expr>");
@@ -359,9 +355,9 @@ node_t* expr(){
 	}
 }
 
-/***************
+/*************************************************************
 <RO>            ->      < | = <  | >  | = > | < >   |   =    
-***************/
+*************************************************************/
 node_t* RO(){
 	printf("in RO\n");
 	node_t* node = 	create_node("<R0>");
@@ -410,9 +406,9 @@ node_t* RO(){
 	}
 }
 
-/***************
+/*************************************************************
 <A>             ->        <N> / <A> | <N>
-***************/
+*************************************************************/
 node_t* A(){
 	printf("in A\n");
 	node_t* node = 	create_node("<A>");
@@ -431,9 +427,9 @@ node_t* A(){
 	}
 }
 
-/***************
+/*************************************************************
 <N>             ->       <M> * <N> | <M>
-***************/
+*************************************************************/
 node_t* N(){
 	printf("in N\n");
 	node_t* node = 	create_node("<N>");
@@ -452,9 +448,9 @@ node_t* N(){
 	}
 }
 
-/***************
+/*************************************************************
 <M>              ->     % <M> |  <R>
-***************/
+*************************************************************/
 node_t* M(){
 	printf("In M\n");
 	node_t* node = 	create_node("<M>");
@@ -477,9 +473,9 @@ node_t* M(){
 	}
 }
 
-/***************
+/*************************************************************
 <R>              ->      ( <expr> ) | Identifier | Integer
-***************/
+*************************************************************/
 node_t* R(){
 	printf("In R\n");
 	node_t* node = 	create_node("<R>");
@@ -518,7 +514,7 @@ node_t* R(){
 void consume(){
 	tk = scanner();
 	//for debugging
-	printf("\nNEXT TOKEN\nTK:    [%s]\nTKstr: %s\nLine#: %d\n\n", tk.name, tk.str, tk.line);
+	//printf("\nNEXT TOKEN\nTK:    [%s]\nTKstr: %s\nLine#: %d\n\n", tk.name, tk.str, tk.line);
 }
 
 node_t* create_node(char* label){
