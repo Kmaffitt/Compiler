@@ -30,12 +30,13 @@ void checkStaticSemantics(node_t* node){
         }
         //haven't defined var yet, add it to T
         T[size++] = node->token;
-    //using var-- R, in, or assign
-    }else if(!strcmp(node->label,"<R>") || !strcmp(node->label,"<in>") || !strcmp(node->label,"<assign>")){
+    //using var-- R, in, or assign. Token is an idTK (R nodes can store both int and id tokens) in an <R>, <in>, or <assign> node
+    }else if((!strcmp(node->label,"<R>") || !strcmp(node->label,"<in>") || !strcmp(node->label,"<assign>"))&& !strcmp(node->token.name,"idTK")){
         //check if ID has been defined yet
         for(i = 0; i < size; i++){
-            if(strcmp(T[i].str,node->token.str)){
+            if(!strcmp(T[i].str,node->token.str)){
                 //already have ID
+                printf("Already defined tk: %s, tk usage %s validated\n", T[i].str, node->token.str);
                 varDefined = 1;
                 break;
             }    

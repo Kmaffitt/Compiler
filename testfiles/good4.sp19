@@ -1,0 +1,11 @@
+var x1 : 1
+void
+  var x2 : 2
+  scan x1 ;
+  cond [ x1 + x2 = < 3 ]
+  void
+    var x3 : 3
+   iter [ 1 < > x3 ] 
+      print x1 ;
+return ; 
+return

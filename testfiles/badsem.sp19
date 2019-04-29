@@ -1,0 +1,7 @@
+void
+  var x1 : 1
+  var x2 : 2
+  scan x1 ;
+  cond [ x1 + x2 = < x3 ] & var x3 undefined
+    print x2 ;
+return
