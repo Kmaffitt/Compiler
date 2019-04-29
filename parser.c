@@ -226,8 +226,9 @@ node_t* in(){
 	node_t* node = 	create_node("<in>");
 	if(tk.id == idTK){
 		//save Identifier		
-		node -> c1 = create_node("Identifier");
-		node -> c1 -> token = tk;
+		//node -> c1 = create_node("Identifier");
+		//node -> c1 -> token = tk;
+		node -> token = tk;
 		consume();
 		printf("returning in\n");
 		return node;
@@ -309,8 +310,9 @@ node_t* assign(){
 	printf("in assign\n");
 	node_t* node = 	create_node("<assign>");
 	//save id
-	node -> c1 = create_node("Identifier");
-	node -> c1 -> token = tk;
+	//node -> c1 = create_node("Identifier");
+	//node -> c1 -> token = tk;
+	node -> token = tk;
 	consume();
 	if(tk.id == eqTK){
 		consume();
@@ -492,15 +494,17 @@ node_t* R(){
 		}
 	}else if(tk.id == idTK){
 		//save id
-		node -> c1 = create_node("Identifier");
-		node -> c1 -> token = tk;
+		//node -> c1 = create_node("Identifier");
+		//node -> c1 -> token = tk;
+		node -> token = tk;
 		consume();
 		printf("returning R, id\n");
 		return node;
 	}else if(tk.id == intTK){
 		//save int
-		node -> c1 = create_node("Integer");
-		node -> c1 -> token = tk;
+		//node -> c1 = create_node("Integer");
+		//node -> c1 -> token = tk;
+		node -> token = tk;
 		consume();
 		printf("returning R, int\n");
 		return node;

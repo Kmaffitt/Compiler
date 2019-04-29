@@ -10,6 +10,7 @@
 #include "parser.h"
 #include "node.h"
 #include "token.h"
+#include "statSem.h"
 
 
 FILE* file;
@@ -36,8 +37,11 @@ int main(int argc, char *argv[]) {
 	printf("\n\nPRINTING TREE\n\n");
 	printTree(tree, 0);
 	printf("\n\n");
+	printf("\n\nCHECKING STATIC SEMANTICS\n\n");
+	checkStaticSemantics(tree);
+    printf("PARSE TREE STATIC SEMANTICS VALIDATED\n");
+
 	fclose(file);
-	
 	return 0;
 }
 
