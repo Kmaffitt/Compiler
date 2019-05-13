@@ -11,15 +11,17 @@
 #include "node.h"
 #include "token.h"
 #include "statSem.h"
+#include "codeGen.h"
 
 
 FILE* file;
+FILE* outFile;
+
 
 int main(int argc, char *argv[]) {
 	
 	char filename[50];
-	
-	
+
 	if ( argc == 2 ){
 		strcpy(filename, argv[1]);
 		if( access( filename, F_OK ) == -1){
@@ -41,7 +43,13 @@ int main(int argc, char *argv[]) {
 	checkStaticSemantics(tree);
     printf("PARSE TREE STATIC SEMANTICS VALIDATED\n");
 
+
+	strcat(filename, ".asm");
+    outFile = fopen(filename, "w");
+	gen(tree);
+
 	fclose(file);
+	fclose(outFile);
 	return 0;
 }
 
