@@ -34,9 +34,9 @@ int main(int argc, char *argv[]) {
 	file = fopen(filename, "r");
 	//testScanner();
 	node_t* tree = parse();
-	printf("\n\nPRINTING TREE\n\n");
-	printTree(tree, 0);
-	printf("\n\n");
+	//printf("\n\nPRINTING TREE\n\n");
+	//printTree(tree, 0);
+	//printf("\n\n");
 	printf("\n\nCHECKING STATIC SEMANTICS\n\n");
 	checkStaticSemantics(tree);
     printf("PARSE TREE STATIC SEMANTICS VALIDATED\n");
