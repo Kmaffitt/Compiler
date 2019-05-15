@@ -1,6 +1,0 @@
-var x1:1
-void
-scan x1;
-cond[x1 = 17/2*2-3]
-print 1;
-return
