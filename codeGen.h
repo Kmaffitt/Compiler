@@ -5,5 +5,6 @@
 
 void gen(node_t*);
 token_t* makeTemp();
+char* makeLabel();
 
 #endif
