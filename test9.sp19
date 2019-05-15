@@ -1,0 +1,9 @@
+var x1:1
+void
+scan x1;
+iter[x1=>0]
+void
+print x1;
+x1 = x1-1;
+return;
+return

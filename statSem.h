@@ -4,6 +4,7 @@
 #include "node.h"
 
 token_t* T;
+int size;
 
 void checkStaticSemantics(node_t*);
 

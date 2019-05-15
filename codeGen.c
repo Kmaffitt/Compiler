@@ -34,11 +34,11 @@ void gen(node_t* node){
             //print out variables
             int i;
             for(i=0; i<size; i++){
-                fprintf(outFile, "%s O\n", T[i].str);
+                fprintf(outFile, "%s 0\n", T[i].str);
             }
 
             for(i=0; i<numTemps; i++){
-                fprintf(outFile, "%s O\n", Temp[i].str);
+                fprintf(outFile, "%s 0\n", Temp[i].str);
             }
 
         }else if(!strcmp(label, "<vars>")){
@@ -132,7 +132,7 @@ void gen(node_t* node){
             //labels for loop
             char* startLabel = makeLabel();
             char* endLabel = makeLabel();
-            fprintf(outFile, "%s: \n", startLabel);
+            fprintf(outFile, "%s: ", startLabel);
             //rightmost expr
             gen(node->c3);
             //store result
@@ -174,7 +174,7 @@ void gen(node_t* node){
                 //<A>
                 gen(node->c1);
             }else{
-                gen(node->c2);
+                gen(node->c3);
                 token_t* tp = makeTemp();
                 fprintf(outFile, "STORE %s\n", tp->str);
                 gen(node->c1);
