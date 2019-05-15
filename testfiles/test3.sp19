@@ -1,0 +1,5 @@
+var x1:1
+void
+scan x1;
+print %%%x1;
+return
